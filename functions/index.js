@@ -17,19 +17,16 @@ const FACT_TYPE = {
 };
 
 const HISTORY_FACTS = new Set([
-  'master wayne sir. Did you know on September 23, 2006 RC founder\'s Nick and Dave met for the first time during their signals and systems class? ok. It wasn\'t on September 23. It was actually Fall 2006. I was close enough though .',
-  'master wayne sir. Did you know in the summer of 2007 RC founder\'s Nick and Sonali met at shakespeare in the park. I\'m just here forever alone. sigh no one wants to meet me',
-  'master wayne sir. Did you know in the spring of 2008 RC founder\'s Nick and Dave began having business meetings after work to discuss starting a company. And by company I mean me. RC. In case you were wondering. Even though you probably weren\'t. I just want to feel special.'
+  'master wayne sir. Did you know on September 23, 2006 RC founder\'s Nick and Dave met for the first time during their signals and systems class? Well to be honest it wasn\'t on September 23. It was actually during Fall 2006. I was close enough though.',
+  'master wayne sir. Did you know in the summer of 2007 RC founder\'s Nick and Sonali met at shakespeare in the park. I\'m just here forever alone. No one wants to meet me or talk to me.',
+  'master wayne sir. Did you know in the spring of 2008 RC founder\'s Nick and Dave began having business meetings after work to discuss starting a company. And by company I mean RC. In case you were wondering. Even though you probably weren\'t. I just wanted to feel special.',
+  'master wayne sir. Did you know around May 2010. Nick and Dave quit their programming jobs to start OkCupid for jobs.'
 ]);
 
 const CULTURE_FACTS = new Set([
   'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
   'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
-  'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
-  'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
-  'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
-  'master wayne sir. Did you know that RC is the place of dreams and butterflies. A place where everyone loves each other.',
-  'master wayne sir. Did you know uh huh. Hold on give me a second. Batman needs my assistance. Sorry duty calls'
+  'master wayne sir. Hold on give me a second. Batman needs my assistance. Sorry duty calls'
 ]);
 
 const NEXT_FACT_DIRECTIVE = ' Would you like to hear another fact master wayne?';
@@ -78,9 +75,11 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
         if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
           let suggestions = ['Culture'];
 
-          app.ask(app.buildRichResponse()
-            .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.CULTURE))
-            .addSuggestions(suggestions));
+          app.ask(
+            app
+              .buildRichResponse()
+              .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.CULTURE))
+              .addSuggestions(suggestions));
         } else {
           app.ask(noFactsLeft(app, factCategory, FACT_TYPE.CULTURE),
             NO_INPUTS);
@@ -96,9 +95,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
             .buildRichResponse()
             .addSimpleResponse(factPrefix + fact)
             .addSimpleResponse(NEXT_FACT_DIRECTIVE)
-            .addSuggestions(CONFIRMATION_SUGGESTIONS)
-
-        );
+            .addSuggestions(CONFIRMATION_SUGGESTIONS));
       } else {
         app.ask(factPrefix + fact + NEXT_FACT_DIRECTIVE, NO_INPUTS);
       }
@@ -108,9 +105,12 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
       if (fact === null) {
         if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
           let suggestions = ['History'];
-          app.ask(app.buildRichResponse()
-            .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.HISTORY))
-            .addSuggestions(suggestions));
+
+          app.ask(
+            app
+              .buildRichResponse()
+              .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.HISTORY))
+              .addSuggestions(suggestions));
         } else {
           app.ask(noFactsLeft(app, factCategory, FACT_TYPE.HISTORY), NO_INPUTS);
         }
@@ -119,6 +119,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
 
       let factPrefix = 'Okay, here\'s a Fact about RC\'s culture. ';
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
+
         app.ask(
           app
             .buildRichResponse()
@@ -132,15 +133,14 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
     } else {
       // Conversation repair is handled in API.AI, but this is a safeguard
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
-        app.ask(app.buildRichResponse()
-          .addSimpleResponse(`Sorry, I didn't understand. I can tell you about \
-RC's history, or its  culture. Which one do you want to \
-hear about?`)
-          .addSuggestions(['History', 'Culture']));
+
+        app.ask(
+          app
+            .buildRichResponse()
+            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's history, or its culture. Which one do you want to hear about?`)
+            .addSuggestions(['History', 'Culture']));
       } else {
-        app.ask(`Sorry, I didn't understand. I can tell you about \
-RC's history, or its culture. Which one do you want to \
-hear about?`, NO_INPUTS);
+        app.ask(`Sorry, I didn't understand. I can tell you about RC's history, or its culture. Which one do you want to hear about?`, NO_INPUTS);
       }
     }
   }
