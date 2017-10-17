@@ -8,6 +8,7 @@ const fact = require('./rcFactType.js');
 // recurse api
 const hackerschool = require('hackerschool-api');
 const queryString = require('query-string');
+const config = require('./config.js');
 
 // API.AI actions
 const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
@@ -146,3 +147,26 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
 
   app.handleRequest(actionMap);
 });
+
+// login service begins
+
+let client = hackerschool.client();
+let auth = hackerschool.auth(config.rcOAuth);
+
+exports.login = functions.https.onRequest((request, response) => {
+  // fetch state : STRING from google service
+  let stateQuery = `&${queryString.stringify({state : req.query.state})}`
+
+  // attach state : STRING to authUrl
+  let authUrl = auth.createAuthUrl().concat(stateQuery);
+
+  // redirect the user to the auth page
+  // response.redirect(authUrl);
+
+  // TEST -> view URL parameters
+  // response.send(req.query);
+
+  response.send('Setting up login/auth serverless service for RC');
+})
+
+// login service ends
