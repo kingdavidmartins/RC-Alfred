@@ -5,6 +5,10 @@ const App = require('actions-on-google').ApiAiApp;
 const functions = require('firebase-functions');
 const fact = require('./rcFactType.js');
 
+// recurse api
+const hackerschool = require('hackerschool-api');
+const queryString = require('query-string');
+
 // API.AI actions
 const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
 const TELL_FACT = 'tell.fact';
