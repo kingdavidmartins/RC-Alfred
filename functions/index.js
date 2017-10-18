@@ -167,6 +167,23 @@ exports.login = functions.https.onRequest((request, response) => {
   // response.send(req.query);
 
   response.send('Setting up login/auth serverless service for RC');
-})
+});
 
 // login service ends
+
+
+// token service starts
+
+exports.token = functions.https.onRequest((request, response) => {
+  // post method handler
+  if (request.method === 'POST') {
+
+  }
+
+  // get method handler
+  if (request.method === 'GET') {
+    response.send('Setting up token/refresh-token serverless service for RC');
+  }
+});
+
+// token service ends
