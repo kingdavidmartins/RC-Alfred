@@ -178,6 +178,65 @@ exports.token = functions.https.onRequest((request, response) => {
   // post method handler
   if (request.method === 'POST') {
 
+    // grant_type handler [authorization_code] starts
+    if (req.query.grant_type === 'authorization_code') {
+
+      let code = req.query.code;
+
+      auth
+        .getToken(code)
+        .then(function(token) {
+          // tells the client instance to use this token for all requests
+          client.setToken(token);
+
+          let grantAuthCodeObj = {
+            token_type: client.token.token.token_type,
+            access_token: client.token.token.access_token,
+            refresh_token: client.token.token.refresh_token,
+            expires_in: client.token.token.expires_in
+          }
+
+          res.json(grantAuthCodeObj)
+
+        }, function(err) {
+
+
+          res.send('There was an error getting the authorization_code. ' + require('util').inspect(err, { depth: null }) );
+        });
+
+    }
+    // grant_type handler [authorization_code] ends
+
+
+    // grant_type handler [refresh_token] starts
+    if (req.query.grant_type === 'refresh_token') {
+
+      let code = req.query.refresh_token;
+
+      auth
+        .getToken(code)
+        .then(function(token) {
+          // tells the client instance to use this token for all requests
+          client.setToken(token);
+
+          let refreshAuthCodeObj = {
+            token_type: client.token.token.token_type,
+            access_token: client.token.token.access_token,
+            refresh_token: client.token.token.refresh_token,
+            expires_in: client.token.token.expires_in
+          }
+
+          res.json(refreshAuthCodeObj)
+
+        }, function(err) {
+
+
+          res.send('There was an error getting the refresh_token. ' + require('util').inspect(err, { depth: null }) );
+        });
+
+    }
+    // grant_type handler [refresh_token] ends
+
   }
 
   // get method handler
