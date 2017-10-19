@@ -13,7 +13,7 @@ const config = require('./config.js');
 // STABLE API.AI actions
 const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
 
-const NEXT_FACT_DIRECTIVE = ' Would you like to hear another fact master wayne?';
+const NEXT_FACT_DIRECTIVE = 'Is there anything I can help you with dear friend?';
 const CONFIRMATION_SUGGESTIONS = ['Sure', 'Thank you, bye'];
 
 const NO_INPUTS = [
@@ -139,36 +139,36 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
 
     if (checkInCategory === CHECK_IN_TYPE.IN) {
 
-      let checkStatus = 'TRUE  -> YOUR CHECKED IN'
-      let checkStatusPrefix = 'Sure, here\'s a fact about RC\'s history. ';
+      // let checkStatus = 'TRUE  -> YOUR CHECKED IN'
+      let checkStatusPrefix = 'OH MY! We love people like you. People who just loves to check in. Even though they are already checked in';
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
         app.ask(
           app
             .buildRichResponse()
-            .addSimpleResponse(checkStatusPrefix + checkStatus)
+            .addSimpleResponse(checkStatusPrefix)
             .addSimpleResponse(NEXT_FACT_DIRECTIVE)
             .addSuggestions(CONFIRMATION_SUGGESTIONS));
       } else {
-        app.ask(checkStatusPrefix + checkStatus + NEXT_FACT_DIRECTIVE, NO_INPUTS);
+        app.ask(checkStatusPrefix + NEXT_FACT_DIRECTIVE, NO_INPUTS);
       }
       return;
     } else if (checkInCategory === CHECK_IN_TYPE.OUT) {
 
-      let checkStatus = 'TRUE  -> YOUR CHECKED OUT'
-      let checkStatusPrefix = 'Sure, here\'s a fact about RC\'s history. ';
+      // let checkStatus = 'TRUE  -> YOUR CHECKED OUT'
+      let checkStatusPrefix = 'I had the time of my life. And I never felt this way before. And I swear this is true. And I owe it all to you. Hope you were productive and you enjoyed your time at RC';
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
         app.ask(
           app
             .buildRichResponse()
-            .addSimpleResponse(checkStatusPrefix + checkStatus)
+            .addSimpleResponse(checkStatusPrefix)
             .addSimpleResponse(NEXT_FACT_DIRECTIVE)
             .addSuggestions(CONFIRMATION_SUGGESTIONS));
       } else {
-        app.ask(checkStatusPrefix + checkStatus + NEXT_FACT_DIRECTIVE, NO_INPUTS);
+        app.ask(checkStatusPrefix + NEXT_FACT_DIRECTIVE, NO_INPUTS);
       }
       return;
     } else {
@@ -178,10 +178,10 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
         app.ask(
           app
             .buildRichResponse()
-            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`)
-            .addSuggestions(['History', 'Culture', 'Check Me In']));
+            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In or Out. Which action do you want me to perform?`)
+            .addSuggestions(['History', 'Culture', 'Check Me In or Out']));
       } else {
-        app.ask(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`, NO_INPUTS);
+        app.ask(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In or Out. Which action do you want me to perform?`, NO_INPUTS);
       }
     }
   }
