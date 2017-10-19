@@ -67,24 +67,10 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
     let factCategory = app.getArgument(CATEGORY_ARGUMENT);
 
     if (factCategory === FACT_TYPE.HISTORY) {
+
       let fact = getRandomFact(historyFacts);
-      if (fact === null) {
-        if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
-          let suggestions = ['Culture'];
-
-          app.ask(
-            app
-              .buildRichResponse()
-              .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.CULTURE))
-              .addSuggestions(suggestions));
-        } else {
-          app.ask(noFactsLeft(app, factCategory, FACT_TYPE.CULTURE),
-            NO_INPUTS);
-        }
-        return;
-      }
-
       let factPrefix = 'Sure, here\'s a fact about RC\'s history. ';
+
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
         app.ask(
@@ -98,23 +84,10 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
       }
       return;
     } else if (factCategory === FACT_TYPE.CULTURE) {
+
       let fact = getRandomFact(cultureFacts);
-      if (fact === null) {
-        if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
-          let suggestions = ['History'];
-
-          app.ask(
-            app
-              .buildRichResponse()
-              .addSimpleResponse(noFactsLeft(app, factCategory, FACT_TYPE.HISTORY))
-              .addSuggestions(suggestions));
-        } else {
-          app.ask(noFactsLeft(app, factCategory, FACT_TYPE.HISTORY), NO_INPUTS);
-        }
-        return;
-      }
-
       let factPrefix = 'Okay, here\'s a Fact about RC\'s culture. ';
+
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
         app.ask(
