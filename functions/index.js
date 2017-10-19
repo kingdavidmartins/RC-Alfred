@@ -10,21 +10,8 @@ const hackerschool = require('hackerschool-api');
 const queryString = require('query-string');
 const config = require('./config.js');
 
-// API.AI actions
+// STABLE API.AI actions
 const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
-const TELL_FACT = 'tell.fact';
-
-// API.AI parameter names
-const CATEGORY_ARGUMENT = 'fact-category';
-
-const FACT_TYPE = {
-  HISTORY: 'history',
-  CULTURE: 'culture'
-};
-
-const HISTORY_FACTS = new Set(fact.history);
-
-const CULTURE_FACTS = new Set(fact.culture);
 
 const NEXT_FACT_DIRECTIVE = ' Would you like to hear another fact master wayne?';
 const CONFIRMATION_SUGGESTIONS = ['Sure', 'Thank you, bye'];
@@ -35,6 +22,23 @@ const NO_INPUTS = [
   'We can stop here. See you soon.'
 ];
 
+// FACT VARIABLES ENDS
+
+// tell_fact API.AI actions
+const TELL_FACT = 'tell.fact';
+
+// API.AI parameter names
+const CATEGORY_ARGUMENT_FACT = 'fact-category';
+
+const FACT_TYPE = {
+  HISTORY: 'history',
+  CULTURE: 'culture'
+};
+
+const HISTORY_FACTS = new Set(fact.history);
+const CULTURE_FACTS = new Set(fact.culture);
+
+// Random fact finder function
 function getRandomFact (facts) {
 
   let randomIndex = (Math.random() * (facts.size - 1)).toFixed();
@@ -50,21 +54,33 @@ function getRandomFact (facts) {
   }
   return randomFact;
 }
+// FACT VARIABLES ENDS
+
+// CHECK IN VARIABLES starts
+
+// check_in API.AI actions
+const CHECK_IN = 'check.in';
+
+// API.AI parameter names
+const CATEGORY_ARGUMENT_CHECKIN = 'check-in-category';
+
+const CHECK_IN_TYPE = {
+  IN: 'in',
+  OUT: 'out'
+};
+
+// CHECK IN VARIABLES ENDS
 
 exports.factsaboutrc = functions.https.onRequest((request, response) => {
   const app = new App({ request, response });
 
-  // uncomment to log request.header & request.body
-  // console.log('Request headers: ' + JSON.stringify(request.headers));
-  // console.log('Request body: ' + JSON.stringify(request.body));
-
-  // Say a fact
+  // FACT STARTS
   function tellFact (app) {
     let historyFacts = HISTORY_FACTS;
     let cultureFacts = CULTURE_FACTS;
 
 
-    let factCategory = app.getArgument(CATEGORY_ARGUMENT);
+    let factCategory = app.getArgument(CATEGORY_ARGUMENT_FACT);
 
     if (factCategory === FACT_TYPE.HISTORY) {
 
@@ -107,21 +123,78 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
         app.ask(
           app
             .buildRichResponse()
-            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's history, or its culture. Which one do you want to hear about?`)
-            .addSuggestions(['History', 'Culture']));
+            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`)
+            .addSuggestions(['History', 'Culture', 'Check Me In']));
       } else {
-        app.ask(`Sorry, I didn't understand. I can tell you about RC's history, or its culture. Which one do you want to hear about?`, NO_INPUTS);
+        app.ask(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`, NO_INPUTS);
       }
     }
   }
+  // FACT ENDS
+
+  // CHECK IN STARTS
+  function checkIn (app) {
+
+    let checkInCategory = app.getArgument(CATEGORY_ARGUMENT_CHECKIN);
+
+    if (checkInCategory === CHECK_IN_TYPE.IN) {
+
+      let checkStatus = 'TRUE  -> YOUR CHECKED IN'
+      let checkStatusPrefix = 'Sure, here\'s a fact about RC\'s history. ';
+
+      if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
+
+        app.ask(
+          app
+            .buildRichResponse()
+            .addSimpleResponse(checkStatusPrefix + checkStatus)
+            .addSimpleResponse(NEXT_FACT_DIRECTIVE)
+            .addSuggestions(CONFIRMATION_SUGGESTIONS));
+      } else {
+        app.ask(checkStatusPrefix + checkStatus + NEXT_FACT_DIRECTIVE, NO_INPUTS);
+      }
+      return;
+    } else if (checkInCategory === CHECK_IN_TYPE.OUT) {
+
+      let checkStatus = 'TRUE  -> YOUR CHECKED OUT'
+      let checkStatusPrefix = 'Sure, here\'s a fact about RC\'s history. ';
+
+      if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
+
+        app.ask(
+          app
+            .buildRichResponse()
+            .addSimpleResponse(checkStatusPrefix + checkStatus)
+            .addSimpleResponse(NEXT_FACT_DIRECTIVE)
+            .addSuggestions(CONFIRMATION_SUGGESTIONS));
+      } else {
+        app.ask(checkStatusPrefix + checkStatus + NEXT_FACT_DIRECTIVE, NO_INPUTS);
+      }
+      return;
+    } else {
+      // Conversation repair is handled in API.AI, but this is a safeguard
+      if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
+
+        app.ask(
+          app
+            .buildRichResponse()
+            .addSimpleResponse(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`)
+            .addSuggestions(['History', 'Culture', 'Check Me In']));
+      } else {
+        app.ask(`Sorry, I didn't understand. I can tell you about RC's History, it's Culture, Or I can Check You In. Which action do you want me to perform?`, NO_INPUTS);
+      }
+    }
+  }
+  // CHECK IN ENDS
 
   let actionMap = new Map();
   actionMap.set(TELL_FACT, tellFact);
+  actionMap.set(CHECK_IN, checkIn);
 
   app.handleRequest(actionMap);
 });
 
-// login service begins
+
 
 let client = hackerschool.client();
 let auth = hackerschool.auth(config.rcOAuth);
