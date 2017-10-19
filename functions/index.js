@@ -155,7 +155,7 @@ let auth = hackerschool.auth(config.rcOAuth);
 
 exports.login = functions.https.onRequest((request, response) => {
   // fetch state : STRING from google service
-  let stateQuery = `&${queryString.stringify({state : req.query.state})}`
+  let stateQuery = `&${queryString.stringify({state : request.query.state})}`
 
   // attach state : STRING to authUrl
   let authUrl = auth.createAuthUrl().concat(stateQuery);
@@ -179,9 +179,9 @@ exports.token = functions.https.onRequest((request, response) => {
   if (request.method === 'POST') {
 
     // grant_type handler [authorization_code] starts
-    if (req.query.grant_type === 'authorization_code') {
+    if (request.query.grant_type === 'authorization_code') {
 
-      let code = req.query.code;
+      let code = request.query.code;
 
       auth
         .getToken(code)
@@ -196,12 +196,12 @@ exports.token = functions.https.onRequest((request, response) => {
             expires_in: client.token.token.expires_in
           }
 
-          res.json(grantAuthCodeObj)
+          response.json(grantAuthCodeObj)
 
         }, function(err) {
 
 
-          res.send('There was an error getting the authorization_code. ' + require('util').inspect(err, { depth: null }) );
+          response.send('There was an error getting the authorization_code. ' + require('util').inspect(err, { depth: null }) );
         });
 
     }
@@ -209,9 +209,9 @@ exports.token = functions.https.onRequest((request, response) => {
 
 
     // grant_type handler [refresh_token] starts
-    if (req.query.grant_type === 'refresh_token') {
+    if (request.query.grant_type === 'refresh_token') {
 
-      let code = req.query.refresh_token;
+      let code = request.query.refresh_token;
 
       auth
         .getToken(code)
@@ -226,12 +226,12 @@ exports.token = functions.https.onRequest((request, response) => {
             expires_in: client.token.token.expires_in
           }
 
-          res.json(refreshAuthCodeObj)
+          response.json(refreshAuthCodeObj)
 
         }, function(err) {
 
 
-          res.send('There was an error getting the refresh_token. ' + require('util').inspect(err, { depth: null }) );
+          response.send('There was an error getting the refresh_token. ' + require('util').inspect(err, { depth: null }) );
         });
 
     }
