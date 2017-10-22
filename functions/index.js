@@ -147,7 +147,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
         app.ask(
           app
             .buildRichResponse()
-            .addSimpleResponse(checkStatusPrefix)
+            .addSimpleResponse(checkStatusPrefix + `Your currently at RC`)
             .addSimpleResponse(NEXT_FACT_DIRECTIVE)
             .addSuggestions(CONFIRMATION_SUGGESTIONS));
       } else {
@@ -207,7 +207,7 @@ exports.login = functions.https.onRequest((request, response) => {
   let authUrl = auth.createAuthUrl().concat(stateQuery);
 
   // redirect the user to the auth page
-  // response.redirect(authUrl);
+  response.redirect(authUrl);
 
   // TEST -> view URL parameters
   // response.send(req.query);
@@ -223,6 +223,23 @@ exports.login = functions.https.onRequest((request, response) => {
 exports.token = functions.https.onRequest((request, response) => {
   // post method handler
   if (request.method === 'POST') {
+
+    // code req.query.code handler start
+    if (request.query.grant_type === undefined && request.query.grant_type === undefined) {
+
+      let code = req.query.code;
+
+      auth
+      .getToken(code)
+      .then(function(token) {
+        // tells the client instance to use this token for all requests
+        client.setToken(token);
+        response.json(client);
+      }, function(err) {
+        response.send('There was an error getting the token ~ [no grant_type].' + require('util').inspect(err, { depth: null }) );
+      });
+    }
+    // code req.query.code handler ends
 
     // grant_type handler [authorization_code] starts
     if (request.query.grant_type === 'authorization_code') {
