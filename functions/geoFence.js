@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const getDist = (location1, location2, radiusUnits) => {
 
   flatSet = [];
@@ -9,17 +7,17 @@ const getDist = (location1, location2, radiusUnits) => {
 
   const haversineDistance = (lat1, long1, lat2, long2, radiusUnits) => {
 
-    const radius = [
-      { unit: 'feet' , val: 20908800 },
-      { unit: 'yards' , val: 6969600 },
-      { unit: 'miles' , val: 3960 },
-      { unit: 'mi' , val: 3960 },
-      { unit: 'kilometers' , val: 6371 },
-      { unit: 'km' , val: 6371 },
-      { unit: 'meters' , val: 6371000 }
-    ];
+    const radius = {
+      'feet' : 20908800,
+      'yards' : 6969600,
+      'miles' : 3960,
+      'mi': 3960,
+      'kilometers' : 6371,
+      'km' : 6371,
+      'meters' : 6371000
+    }
 
-    radiusVal = _.find(radius, {'unit' : radiusUnits}).val;
+    radiusVal = radius[radiusUnits];
 
 
     const toRadians = (degree) => (degree * (Math.PI / 180))
