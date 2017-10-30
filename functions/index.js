@@ -3,7 +3,10 @@
 process.env.DEBUG = 'actions-on-google:*';
 const App = require('actions-on-google').ApiAiApp;
 const functions = require('firebase-functions');
+
+// recurse chat agent response
 const fact = require('./rcFactType.js');
+const checkin = require('./checkResponse.js');
 
 // recurse api
 const hackerschool = require('hackerschool-api');
@@ -22,7 +25,10 @@ const NO_INPUTS = [
   'We can stop here. See you soon.'
 ];
 
-// FACT VARIABLES ENDS
+// Random ele function
+const getRandomEle = (array) => array[Math.floor(Math.random() * array.length)]
+
+// FACT VARIABLES STARTS
 
 // tell_fact API.AI actions
 const TELL_FACT = 'tell.fact';
@@ -35,25 +41,6 @@ const FACT_TYPE = {
   CULTURE: 'culture'
 };
 
-const HISTORY_FACTS = new Set(fact.history);
-const CULTURE_FACTS = new Set(fact.culture);
-
-// Random fact finder function
-function getRandomFact (facts) {
-
-  let randomIndex = (Math.random() * (facts.size - 1)).toFixed();
-  let randomFactIndex = parseInt(randomIndex, 10);
-  let counter = 0;
-  let randomFact = '';
-  for (let fact of facts.values()) {
-    if (counter === randomFactIndex) {
-      randomFact = fact;
-      break;
-    }
-    counter++;
-  }
-  return randomFact;
-}
 // FACT VARIABLES ENDS
 
 // CHECK IN VARIABLES starts
@@ -76,15 +63,15 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
 
   // FACT STARTS
   function tellFact (app) {
-    let historyFacts = HISTORY_FACTS;
-    let cultureFacts = CULTURE_FACTS;
+    let historyFacts = fact.history;
+    let cultureFacts = fact.culture;
 
 
     let factCategory = app.getArgument(CATEGORY_ARGUMENT_FACT);
 
     if (factCategory === FACT_TYPE.HISTORY) {
 
-      let fact = getRandomFact(historyFacts);
+      let fact = getRandomEle(historyFacts);
       let factPrefix = 'Sure, here\'s a fact about RC\'s history. ';
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
@@ -101,7 +88,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
       return;
     } else if (factCategory === FACT_TYPE.CULTURE) {
 
-      let fact = getRandomFact(cultureFacts);
+      let fact = getRandomEle(cultureFacts);
       let factPrefix = 'Okay, here\'s a Fact about RC\'s culture. ';
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
@@ -234,7 +221,16 @@ exports.token = functions.https.onRequest((request, response) => {
       .then(function(token) {
         // tells the client instance to use this token for all requests
         client.setToken(token);
-        response.json(client);
+        // response.json(client);
+
+        response.json({
+          token_type: client.token.token.token_type,
+          access_token: client.token.token.access_token,
+          refresh_token: client.token.token.refresh_token,
+          expires_in: client.token.token.expires_in
+        });
+
+
       }, function(err) {
         response.send('There was an error getting the token ~ [no grant_type].' + require('util').inspect(err, { depth: null }) );
       });
