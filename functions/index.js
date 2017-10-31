@@ -6,7 +6,7 @@ const functions = require('firebase-functions');
 
 // recurse chat agent response
 const fact = require('./rcFactType.js');
-const checkin = require('./checkResponse.js');
+const checkRes = require('./checkResponse.js');
 
 // recurse api
 const hackerschool = require('hackerschool-api');
@@ -16,7 +16,7 @@ const config = require('./config.js');
 // STABLE API.AI actions
 const UNRECOGNIZED_DEEP_LINK = 'deeplink.unknown';
 
-const NEXT_FACT_DIRECTIVE = 'Is there anything I can help you with dear friend?';
+const NEXT_FACT_DIRECTIVE = 'Is there anything I can help you with dear Recurser?';
 const CONFIRMATION_SUGGESTIONS = ['Sure', 'Thank you, bye'];
 
 const NO_INPUTS = [
@@ -127,7 +127,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
     if (checkInCategory === CHECK_IN_TYPE.IN) {
 
       // let checkStatus = 'TRUE  -> YOUR CHECKED IN'
-      let checkStatusPrefix = 'OH MY! We love people like you. People who just loves to check in. Even though they are already checked in';
+      let checkStatusPrefix = getRandomEle(checkRes.in);
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
@@ -144,7 +144,7 @@ exports.factsaboutrc = functions.https.onRequest((request, response) => {
     } else if (checkInCategory === CHECK_IN_TYPE.OUT) {
 
       // let checkStatus = 'TRUE  -> YOUR CHECKED OUT'
-      let checkStatusPrefix = 'I had the time of my life. And I never felt this way before. And I swear this is true. And I owe it all to you. Hope you were productive and you enjoyed your time at RC';
+      let checkStatusPrefix = getRandomEle(checkRes.out);
 
       if (app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT)) {
 
